@@ -229,6 +229,9 @@ class PcSet:
                 output += 'B'
         return output
 
+    def __repr__(self):
+        return 'PcSet(%s)' % self.definition
+
     def __len__(self):
         return len(self.definition)
 
