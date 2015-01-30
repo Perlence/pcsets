@@ -30,6 +30,7 @@ python runtest.py        # tests them all
 python runtest.py pcset  # just tests module pcset
 """
 
+from __future__ import print_function
 import unittest, sys
 
 alltests = """
@@ -44,16 +45,17 @@ class NoSuchTestError(Exception): pass
 
 def match(name):
     if name not in alltests:
-        raise NoSuchTestError, "Test '%s' not found." % name
+        raise NoSuchTestError("Test '%s' not found." % name)
     else:
         return name
 
 def run(testlist,level=2):
     for name in testlist:
         if name:
-            print "TESTING MODULE: pcsets.%s" % name
+            print("TESTING MODULE: pcsets.%s" % name)
             if name == 'catalog':
-                print "Generating prime set catalog... (this may take a moment)"
+                print("Generating prime set catalog...",
+                      "(this may take a moment)")
             test = 'test.test_' + name
             suite = unittest.TestLoader().loadTestsFromName(test)
             unittest.TextTestRunner(verbosity=level).run(suite)

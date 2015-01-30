@@ -174,7 +174,7 @@ class SetOperations(unittest.TestCase):
 
     def test_complement_empty_set(self):
         chromatic = self.empty.complement()
-        self.assertEqual(list(chromatic), range(12))
+        self.assertEqual(list(chromatic), list(range(12)))
 
     # reverse
 

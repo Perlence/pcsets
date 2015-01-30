@@ -36,6 +36,7 @@ __metaclass__ = type
 
 
 import unittest
+from functools import reduce
 from operator import add
 
 from pcsets.catalog import SetCatalog

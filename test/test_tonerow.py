@@ -196,5 +196,5 @@ class ToneRowOperations(unittest.TestCase):
     def test_not_rotequiv(self):
         a = ToneRow(range(12))
         # order is everything
-        b = ToneRow(range(10) + [11, 10])
+        b = ToneRow(list(range(10)) + [11, 10])
         self.failIf(rotequiv(a, b))

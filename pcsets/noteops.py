@@ -61,6 +61,7 @@ and bugs will be fixed, but the interface defined here will not change
 in the entire version 2 series.
 """
 
+from __future__ import print_function
 
 __metaclass__ = type
 
@@ -390,7 +391,7 @@ def minconflict(pcs):
     return options[0]
 
 
-def notes(pcslist, pref=''):
+def notes(pcslist, pref=None, unicode=False):
     """
     This function takes a PcSet or a list of numeric pitch classes and
     translates it into a human-readable string of note names. Optionally, it
@@ -398,26 +399,24 @@ def notes(pcslist, pref=''):
     10 and B for 11 (same as the string output of PcSet).
 
     The space-separated notes returned are formatted in several ways,
-    depending on the setting the 'pref' parameter:
+    depending on the setting the *pref* parameter:
 
 
-        pref = ''  (not set)  : (default) 'minimum conflict' setting.
-                                 See the discussion below.
+    *   ``pref = None``: (default) 'minimum conflict' setting.
+                         See the discussion below.
 
-        pref = 'b' (flats)    : 'all flats' setting.
-                                 Flats are chosen.  The 'black key' notes
-                                 are always Db, Eb, Gb, Ab, and Bb.
+    *   ``pref = 'b'`` or ``pref = UFLAT`` (flats): 'all flats' setting. Flats
+        are chosen.  The 'black key' notes are always Db, Eb, Gb, Ab, and Bb.
 
-        pref = '#' (sharps)   : 'all sharps' setting.
-                                 Sharps are chosen.  The 'black key' notes
-                                 are always C#, D#, F#, G#, and A#
+    *   ``pref = '#'`` or ``pref = USHARP`` (sharps): 'all sharps' setting.
+        Sharps are chosen.  The 'black key' notes are always C#, D#, F#, G#,
+        and A#
 
-        pref = u"" (unicode)  : See the 'unicode' discussion below.
-                                 The unicode sharp and flat characters
-                                 are legal substitutes for '#' and 'b'
+    *   ``pref = (anything else)``: UNDEFINED. Who knows what the future holds?
 
-        pref = (anything else): UNDEFINED. Who knows what the future holds?
-
+    If the *unicode* parameter is set to ``True`` or *pref* is either UFLAT or
+    USHARP, the returned string will be unicode as well, using the correct
+    unicode symbols.
 
     THE 'MINIMUM CONFLICT' SETTING:
 
@@ -425,54 +424,41 @@ def notes(pcslist, pref=''):
     For example, 'A# B C Db' would be chosen over 'Bb B C Db', 'A# B C C#', or
     (worst of all) 'Bb B C C#'. This applies only to the 'black key' notes --
     natural-named notes always appear as themselves.
-
-
-    UNICODE
-
-    If the pref is set to the unicode character for the flat symbol (U+266D)
-    or the sharp symbol (U+266F), these are respected as the normal ASCII
-    specifiers above. The returned string will be unicode as well, using the
-    correct unicode symbols.
-
-    To specify default behavior (minimum conflict, see below) but unicode
-    results, set pref=u"" (the unicode empty string). Additionally, if the
-    input to the function is a unicode spec string (for instance, u'037'),
-    this will also trigger unicode output.
     """
     # gatekeeper
     pcs = PcSet(pcslist)
     # accidental preference
     if pref == 'b' or pref == UFLAT:
-        stringform = ' '.join([flat(pc) for pc in pcs])
+        stringform = ' '.join(flat(pc) for pc in pcs)
     elif pref == '#' or pref == USHARP:
-        stringform = ' '.join([sharp(pc) for pc in pcs])
+        stringform = ' '.join(sharp(pc) for pc in pcs)
     else:
         stringform = minconflict(pcs)
     # final formatting
-    if type(pref) == type(u"") or type(pcslist) == type(u""):
+    if unicode or pref in (UFLAT, USHARP):
         stringform = stringform.replace('b', UFLAT)
         stringform = stringform.replace('#', USHARP)
     return stringform
 
 
 if __name__ == '__main__':
-    print "\nDifferent interpretations of the chromatic scale:\n"
-    print "\t>>> from pcsets.pcset import PcSet"
-    print "\t>>> from pcsets.noteops import notes, pcfor"
-    print "\t>>> chromatic = PcSet(range(12))"
-    print "\t>>> print notes(chromatic, pref='b')"
-    print "\t", notes(range(12), pref='b')
-    print "\t>>> print notes(range(12),pref='#') # notes() handles pc lists"
-    print "\t", notes(range(12), pref='#')
-    print "\t>>> print notes(range(12))          # default 'minimum conflict'"
-    print "\t", notes(range(12))
-    print "\t>>> # noteops also allows you to convert from notes to pcsets."
-    print "\t>>> print pcfor('C Db D Eb E F Gb G Ab A Bb B')"
-    print "\t", pcfor('C Db D Eb E F Gb G Ab A Bb B'), "\n"
+    print("\nDifferent interpretations of the chromatic scale:\n")
+    print("\t>>> from pcsets.pcset import PcSet")
+    print("\t>>> from pcsets.noteops import notes, pcfor")
+    print("\t>>> chromatic = PcSet(range(12))")
+    print("\t>>> print notes(chromatic, pref='b')")
+    print("\t", notes(range(12), pref='b'))
+    print("\t>>> print notes(range(12),pref='#') # notes() handles pc lists")
+    print("\t", notes(range(12), pref='#'))
+    print("\t>>> print notes(range(12))          # default 'minimum conflict'")
+    print("\t", notes(range(12)))
+    print("\t>>> # noteops also allows you to convert from notes to pcsets.")
+    print("\t>>> print pcfor('C Db D Eb E F Gb G Ab A Bb B')")
+    print("\t", pcfor('C Db D Eb E F Gb G Ab A Bb B'), "\n")
 
-    print "Minimum conflict tries to select notes so there is minimum"
-    print "namespace conflict between the note names. For example, pitch"
-    print "class set 'AB01' can be rendered 4 ways: \n"
-    print "\t'Bb B C Db', 'A# B C Db','Bb B C C#', or 'A# B C C#'\n"
-    print "\t>>> print notes('AB01')      # notes() understands spec strings!"
-    print "\t", notes('AB01'), "\n"
+    print("Minimum conflict tries to select notes so there is minimum")
+    print("namespace conflict between the note names. For example, pitch")
+    print("class set 'AB01' can be rendered 4 ways: \n")
+    print("\t'Bb B C Db', 'A# B C Db','Bb B C C#', or 'A# B C C#'\n")
+    print("\t>>> print notes('AB01')      # notes() understands spec strings!")
+    print("\t", notes('AB01'), "\n")

@@ -35,6 +35,7 @@ in future versions.
 __metaclass__ = type
 
 import unittest
+from functools import reduce
 
 from pcsets.pcset import PcSet
 from pcsets.pcops import *
@@ -292,8 +293,8 @@ class EmptyOperationTests(unittest.TestCase):
 
     def test_op_path(self):
         result = op_path(self.a, self.b)
-        self.assertEqual(result.Tn, range(12))
-        self.assertEqual(result.TnI, range(12))
+        self.assertEqual(result.Tn, list(range(12)))
+        self.assertEqual(result.TnI, list(range(12)))
 
     def test_symmetry(self):
         self.assertEqual(symmetry(self.a), 12)
@@ -318,13 +319,13 @@ class EmptyOperationTests(unittest.TestCase):
 
     def test_fit_in(self):
         result = fit_in(self.a, self.b)
-        self.assertEqual(result.Tn, range(12))
-        self.assertEqual(result.TnI, range(12))
+        self.assertEqual(result.Tn, list(range(12)))
+        self.assertEqual(result.TnI, list(range(12)))
 
     def test_harmonize(self):
         result = harmonize(self.a, self.b)
-        self.assertEqual(result.Tn, range(12))
-        self.assertEqual(result.TnI, range(12))
+        self.assertEqual(result.Tn, list(range(12)))
+        self.assertEqual(result.TnI, list(range(12)))
 
     def test_Rp(self):
         self.failIf(Rp(self.a, self.b))

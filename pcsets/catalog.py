@@ -71,9 +71,11 @@ and bugs will be fixed, but the interface defined here will not change
 in the entire version 2 series.
 """
 
+from __future__ import print_function
+
 __metaclass__ = type
 
-__all__ = ['SetCatalog']
+__all__ = ('SetCatalog',)
 
 import pickle
 
@@ -84,7 +86,7 @@ PICKLE_FILE = 'catalog.pkl'
 
 
 def all_possible_pcsets():
-    for n in xrange(4096):
+    for n in range(4096):
         result = []
         for bit in range(12):
             if n & (2**bit):
@@ -212,32 +214,32 @@ class SetCatalog:
 
 
 def showcatalog():
-    print "Generating prime set catalog... (this may take a moment)"
+    print("Generating prime set catalog... (this may take a moment)")
     r = SetCatalog(rebuild=True, store=False)
-    print "Pitch Class Set Catalog: %d prime sets total\n" % len(r)
+    print("Pitch Class Set Catalog: %d prime sets total\n" % len(r))
     for n in range(13):
         size = len(r.page(n))
         if size > 1:
             w = 'sets'
         else:
             w = 'set'
-        print "Cardinality %d: %d prime %s" % (n, size, w)
+        print("Cardinality %d: %d prime %s" % (n, size, w))
         position = 0
         for entry in r.page(n):
             if position == 0:
-                print "    ",
+                print("    "),
                 position = 4
             if len(entry) == 0:
-                print '[]',
+                print('[]'),
             else:
-                print entry,
+                print(entry),
             position += len(entry) + 1
             if position > 60:
-                print
+                print()
                 position = 0
-        print
+        print()
         if position > 0:
-            print
+            print()
 
 if __name__ == '__main__':
     showcatalog()

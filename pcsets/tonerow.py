@@ -482,6 +482,6 @@ def randomrow():
 
     That's why we call this 'experimental'!
     """
-    r = range(12)
+    r = list(range(12))
     shuffle(r)
     return ToneRow(r)
