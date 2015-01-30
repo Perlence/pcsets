@@ -49,3 +49,6 @@ doc/_build/
 
 # PyBuilder
 target/
+
+# Prime sets catalog
+catalog.pkl
