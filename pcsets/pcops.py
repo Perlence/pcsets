@@ -32,7 +32,7 @@ EQUALITY
     exact_equality(a,b)
     set_equality(a,b)
     same_prime(a,b)
-    
+
 TRANSFORMATION RELATIONSHIPS
     op_path(a,b)
     symmetry(a)
@@ -42,7 +42,7 @@ TRANSFORMATION RELATIONSHIPS
 SET OPERATIONS
     union(a,b)
     common(a,b)
-    
+
 SET RELATIONSHIPS
     is_complement(a,b)
     is_prime_complement(a,b)
@@ -50,7 +50,7 @@ SET RELATIONSHIPS
     prime_subset_of(a,b)
     fit_in(a,b)
     harmonize(a,b)
-    
+
 SIMILARITY (as defined by Forte)
     Rp(a,b)
     Rp_path(a,b)
@@ -100,10 +100,10 @@ from pcset import *
 class OpSetError(PcSetException):
     """
     When working with OpSets, the constructor operates in one of two modes:
-    
+
         polarity = 'normal'  : (default) set 'a' varied, set 'b' constant
         polarity = 'reverse' : set 'a' constant, set 'b' varied
-    
+
     Any other value for polarity (such as %(mistake)s) is not permitted.
     """
     def __init__(self,mistake):
@@ -213,7 +213,7 @@ def same_prime(a,b):
     will generate every member of that set class.
     """
     return exact_equality(a.prime(),b.prime())
-    
+
 # - - - - - - - - - - - - - - - - - - - - - - - - transformation relationships
 
 def op_path(a,b):
@@ -225,7 +225,7 @@ def op_path(a,b):
 
     Also note that the returned results are operations on 'a' which will yield
     'b'. For TnI, this doesn't matter:
-    
+
         TnI(a) = b and TnI(b) = a.
 
     However, for Tn, the relationship changes:
@@ -329,7 +329,7 @@ def harmonize(a,b):
         results.TnI  : A list of values for n where b is a subset of TnI(a)
 
     Either of these return values may be an empty list. There is also a
-    boolean property 'any' which returns True if any transformation is found.    
+    boolean property 'any' which returns True if any transformation is found.
     """
     # refuse impossible quests
     if len(a) < len(b):
@@ -365,7 +365,7 @@ def prime_subset_of(a,b):
     """
     result = fit_in(a,b)
     return result.any
-    
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - similarity (Forte)
 
 def Rp(a,b):
@@ -374,7 +374,7 @@ def Rp(a,b):
     The remaining elements must match up exactly.
     """
     if len(a) != len(b):
-        return False    
+        return False
     return len(common(a,b)) + 1 == len(a)
 
 def Rp_path(a,b):

@@ -167,7 +167,7 @@ class NotesFromPcTests(unittest.TestCase):
         self.assertEqual(notes(range(12)),notes(self.chrom))
 
     def test_spec_compatibility(self):
-        self.assertEqual(notes('0123456789AB'),notes(self.chrom))    
+        self.assertEqual(notes('0123456789AB'),notes(self.chrom))
 
     # Minimum Conflict. There are a few 'worked example' sets that should give
     # an obvious, consistent answer. The more tests here, the better.
@@ -209,7 +209,7 @@ class NotesFromPcTests(unittest.TestCase):
         # Similar to test above.
         # Screening against double accidental 'Gb G#'
         self.assertEqual(notes(pcs),answer)
-   
+
     def test_minconf_inescapable3(self):
         # 1 conflict no matter what.
         pcs = PcSet('78AB')

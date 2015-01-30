@@ -141,7 +141,7 @@ pointless. Here's an overview:
 
         Marginally useful; I(n) is defined differently for ToneRows,
         and transpose is implied by all the ToneRow operations anyway.
-        
+
     SET OPERATIONS
 
         complement()      : Useless.  Always returns [].
@@ -163,13 +163,13 @@ pointless. Here's an overview:
 
         Although these three are very useful for PcSets, for ToneRows, they
         are equivalent to PcSet(range(12)).
-        
+
     SET ANALYSIS
 
         ivec()            : Useless. Always returns [12,12,12,12,12,6]
 
         cvec()            : Useless. Always returns [12] * 12
-        
+
     SHORTHAND METHODS
 
         I(),
@@ -188,7 +188,7 @@ pointless. Here's an overview:
                             as compact as '52017B463A98'. (Compare to the
                             12 tone lists given as examples in the material
                             above, which took up half the line.)
-                            
+
                             Readability, on the other hand, is another matter!
 
         list(pcs)         : Like its parent class, the ability of a ToneRow
@@ -257,7 +257,7 @@ class ToneRow(PcSet):
     The order of the elements is the most important thing.
 
     ToneRows have the following methods:
-    
+
         P(n)
         R(n)
         I(n)
@@ -272,7 +272,7 @@ class ToneRow(PcSet):
         """
         A ToneRow must be length 12.  It may be defined any way
         that a PcSet can:
-        
+
             1. Through ToneRow([list of integers])
             2. Through ToneRow('spec string')
             3. And, indirectly through ToneRow(pcfor("list of notes"))
@@ -458,7 +458,7 @@ def equivalent(a,b):
         if list(test) == list(standard):
             return True
     return False
-        
+
 
 def rotequiv(a,b):
     """

@@ -105,7 +105,7 @@ class TransformationRelationships(unittest.TestCase):
             ]
         for x in range(5):
             self.assertEqual(symmetry(trials[x]),x)
-            
+
     def test_op_path_symmetry1(self):
         bscale = self.cscale.T(11)
         self.fulltest(self.cscale,bscale,[11],[3])
@@ -200,7 +200,7 @@ class SetRelationships(unittest.TestCase):
         self.assertEqual(result.TnI,[9])
 
     # added Opset.__str__() in 2.0.0b3
-    
+
     def test_OpSet_string_1(self):
         result = fit_in(self.cscale,self.c7)
         self.assertEqual(str(result),'T(7) T(9)I')

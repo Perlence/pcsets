@@ -115,10 +115,10 @@ class SetCatalog:
         * If 'rebuild' is set to True, the module won't look for
           a previously saved catalog (catalog.pkl).  It will just
           go ahead and regenerate the entire thing.
-          
+
         * If 'store' is set to False, the module won't try to save
           its regenerated catalog.
-          
+
         * If 'failsafe' is set to True, then the module will be
           'safe against failure' to write the pickle file.  That
           is, it will ignore the IOError on opening the write.
@@ -133,11 +133,11 @@ class SetCatalog:
           of the catalog.  Each page contains only prime sets of
           length n.  Therefore, trichords are found on page 3,
           hexachords on page 6, and so on.
-          
+
         * As a sanity check, you can use len(sc) on your catalog
           object . . . it should return 224, the number of possible
           prime sets.
-          
+
         * Finally, a simple way to test every possible prime for a
           property is to just use sc as an iterator, as in 'for pc
           in sc:' type statements.  It will return every prime it
@@ -183,7 +183,7 @@ class SetCatalog:
                 self._retrieve()
             except IOError:
                 self._rebuild()
-    
+
     def page(self,n):
         """
         The 'pages' in the catalog are organized by cardinality, that is, the

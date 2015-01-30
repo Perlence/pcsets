@@ -30,7 +30,7 @@ A module that provides translation functions between named notes (for example,
 'C Eb G') and pitch class sets (PcSet objects).
 
     pcfor(s)   : return the equivalent PcSet for the named notes in s.
-    
+
     notes(pcs) : return the equivalent named notes for the PcSet pcs.
 
 The function 'notes' can even handle lists of integers and raw pitch class set
@@ -204,7 +204,7 @@ def pcfor(spec):
     """
     Translates a space-separated string of notes into a PcSet. As is standard,
     C = 0, C#/Db = 1, and so on, all the way to B = 11.
-    
+
     The capital letters A through G are respected; 'b' stands for flat, and
     '#' for sharp. Double flats and double sharps are not permitted.
 
@@ -326,7 +326,7 @@ def minconflict(pcs):
 
     1. Count the number of name conflicts in each string (example, 'B Bb').
        Pass on only those strings which have the least conflicts.
-       
+
     2. To decide between strings with equal conflicts, count the number that
        involve neighboring notes. Example: 'Bb B C' = 1, 'Bb C B' = 0.  Pass
        on only those strings which have the fewest conflicting neighbors.
@@ -403,24 +403,24 @@ def notes(pcslist,pref=''):
 
         pref = ''  (not set)   : (default) 'minimum conflict' setting.
                                  See the discussion below.
-        
+
         pref = 'b' (flats)     : 'all flats' setting.
                                  Flats are chosen.  The 'black key' notes
                                  are always Db, Eb, Gb, Ab, and Bb.
-        
+
         pref = '#' (sharps)    : 'all sharps' setting.
                                  Sharps are chosen.  The 'black key' notes
                                  are always C#, D#, F#, G#, and A#
-        
+
         pref = u"" (unicode)   : See the 'unicode' discussion below.
                                  The unicode sharp and flat characters
                                  are legal substitutes for '#' and 'b'
-        
+
         pref = (anything else) : UNDEFINED. Who knows what the future holds?
 
 
     THE 'MINIMUM CONFLICT' SETTING:
-    
+
     Note names are chosen to minimize the sharing of names with accidentals.
     For example, 'A# B C Db' would be chosen over 'Bb B C Db', 'A# B C C#', or
     (worst of all) 'Bb B C C#'. This applies only to the 'black key' notes --

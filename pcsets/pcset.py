@@ -166,7 +166,7 @@ class PcSet:
     FUNDAMENTAL METHODS
         invert()
         transpose(n)
-        
+
     SET OPERATIONS
         complement()
         reverse()
@@ -176,11 +176,11 @@ class PcSet:
         normal()
         reduced()
         prime()
-        
+
     SET ANALYSIS
         ivec()
         cvec()
-        
+
     SHORTHAND METHODS
         I()
         T(n)
@@ -191,7 +191,7 @@ class PcSet:
     making possible calls such as len(pcs), str(pcs), and list(pcs).
 
     A useful reference for understanding pc sets:
-    http://www.jaytomlin.com/music/settheory/help.html    
+    http://www.jaytomlin.com/music/settheory/help.html
     """
 
     # basic services
@@ -398,7 +398,7 @@ class PcSet:
                 if intervalclass > 6:
                     intervalclass = (12 - intervalclass) % 12
                 ivec[intervalclass-1] += 1
-        return ivec        
+        return ivec
 
     def cvec(self):
         """
