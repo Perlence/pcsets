@@ -1,0 +1,83 @@
+                               pcsets:
+                     Pitch Class Sets for Python
+
+                            version 2.0.2
+
+                           Bruce H. McCosar
+
+
+
+                               TESTING
+
+You can test this package to see if it works on your system before
+you install it. I used pure Python throughout, so it shouldn't be a
+problem. However, I was using Python 2.5.1. So far, pcsets has passed
+its test suite on the following platforms (using that platform's version
+of Python 2.5.1 -- I note this again because that version is not the
+default on some systems):
+
+  * Debian GNU/Linux 
+  * Windows (using Cygwin)
+  * Windows XP (using the standard Windows Python).
+
+You can find out if pcsets works on your platform by running the test
+suite. Try this:
+
+    python runtest.py
+
+The 'catalog' module will take a while to do its thing (on my system,
+4.3 seconds) because it has to sort through 4096 possible unordered
+pitch class sets and narrow them down to 224 prime forms.
+
+It should run all 5 test suites. If you encounter a problem on a
+particular module, it would be helpful if you'd rerun the specific
+test and send the output to me, along with details about your Python
+version, platform, etc.
+
+Here's how to rerun a specific module test: if you had a failure in,
+say, the module 'pcset', you'd just run:
+
+    python runtest.py pcset
+
+It will go into specific detail about what worked and what failed.
+
+Want to see some demos? Try this:
+
+    python pcsets/catalog.py
+
+    python pcsets/noteops.py
+
+
+                             INSTALLATION
+
+If you run:
+
+    python setup.py install
+
+This should place the pcsets package in your Python distribution's
+site-packages.  Provided your distro is properly configured, that is.
+
+
+--BMC
+
+
+# pcsets 2.0.2 -- Pitch Class Sets for Python.
+#
+# Copyright 2007 Bruce H. McCosar
+#
+# This file is part of the package 'pcsets'
+#
+# The package 'pcsets' is free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 3 of
+# the License, or (at your option) any later version.
+#
+# The package 'pcsets' is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+# $Id: INSTALL 191 2007-08-07 03:15:46Z mccosar $

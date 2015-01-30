@@ -1,0 +1,234 @@
+ChangeLog: pcsets version 2 series                            -*-Text-*-
+========================================================================
+
+  PCSETS VERSION 2.0.2
+
+  My apologies for the lag in updating this module. I'm a middle school
+  science teacher by day, a musician by night, and ... well, evidently
+  a programmer in the only thing left -- The Twilight Zone(tm). School
+  started up again, and I'm in a constant battle to get things done.
+
+  First, I had to fix the versioning information in the README file.
+  The one that was published in the beta versions -- and all the way
+  up to version 2.0.1 -- was, I guess you could say, a missed merge.
+  All this time, I thought the text read correctly.  I focused on the
+  'big picture' items at the top of the file, and sort of assumed I'd
+  merged that change from the now-extinct 'Monolith' branch. [One with
+  pcops integrated into PcSets... bad idea for various reasons, so it
+  went to visit the Triceratops early on.]
+
+  Next, I started a tutorial.  Right now, it's only up to Chapter 2.
+  However, the finished product will have an index, references, and
+  some handy diagrams.
+
+  Finally, I upgraded pcsets.tonerow with a new function and a new
+  method:
+
+    pcsets
+    `-- tonerow
+        |-- ToneRow
+        |   `-- contour
+        `-- randomrow
+
+  I put in a decent amount of documentation for these additions; have
+  a look at the module with pydoc and it should provide a sort of
+  introduction. Until I get to that section of the tutorial, that is
+  ;-)
+
+  svn_loc: atonal/tags/pcsets-2.0.2
+  product: pcsets-2.0.2.tar.gz
+  webpage: http://code.google.com/p/pcsets/
+  dl_link: http://pcsets.googlecode.com/files/pcsets-2.0.2.tar.gz
+
+
+------------------------------------------------------------------------
+r188 | mccosar | 2007-08-06 22:22:15 -0400 (Mon, 06 Aug 2007) | 16 lines
+
+  PCSETS VERSION 2.0.1
+
+  Presenting the new module, pcsets.tonerow, which implements 12-tone
+  rows and the standard group operations on them (P, R, I, and RI).
+  This is an *experimental* module, and won't be in final form until
+  at least version 2.1; I need to add a lot of features, such as a
+  generator function (in the form f(pcs) -> ToneRow).
+
+  In the meantime, the module is heavily populated with documentation
+  strings; a run through it with pydoc might be a good introduction.
+
+  svn_loc: atonal/tags/pcsets-2.0.1
+  product: pcsets-2.0.1.tar.gz
+  webpage: http://code.google.com/p/pcsets/
+  dl_link: http://pcsets.googlecode.com/files/pcsets-2.0.1.tar.gz
+
+
+------------------------------------------------------------------------
+r176 | mccosar | 2007-07-27 23:06:52 -0400 (Fri, 27 Jul 2007)
+
+  PCSETS VERSION 2.0.0 OFFICIAL RELEASE
+
+
+  pcsets/*.py: Docstrings were updated to reflect current status; they
+  were also reformatted, if necessary, to look better with pydoc.
+
+  pcsets.catalog: Somehow this got by with only rudimentary
+  docstrings. I added them. Actually, I added a lot -- the module doc
+  is about the size of a mini tutorial. What can I say, the subject
+  fascinates me.
+
+  pcsets.catalog: Changed the names of methods rewrite, rebuild, and
+  retrieve to the same names with an underscore '_' preface. These are
+  more like internal functions.
+
+  ./runtest.py: Added a notice that only shows up for the 'catalog'
+  tests -- "Generating prime set catalog... (this may take a
+  moment)" The same message was inserted at the start of the
+  pcsets.catalog.showcatalog() demo function.
+
+  pcsets.pcops.OpSet: now returns the string 'None' when __str__
+  output is requested, but no solution sets were found.
+
+
+  svn_loc: atonal/tags/pcsets-2.0.0
+  product: pcsets-2.0.0.tar.gz
+  webpage: http://code.google.com/p/pcsets/
+  dl_link: http://pcsets.googlecode.com/files/pcsets-2.0.0.tar.gz
+
+
+------------------------------------------------------------------------
+r161 | mccosar | 2007-07-23 19:58:12 -0400 (Mon, 23 Jul 2007)
+
+  PCSETS VERSION 2.0.0 BETA 3 RELEASE
+
+
+  Additions to Core API (see full list in the previous ChangeLog entry)
+
+  pcsets/
+  |-- pcset
+  |   `-- PcSets
+  |       `-- reduced +    # These additions are
+  `-- pcops                # all shortcut functions
+      |-- rel_Tn +         # for otherwise 'wordy'
+      `-- rel_TnI +        # operation sequences.
+
+
+  1. Two new test types were added to test/test_noteops, both having to
+     do with scales. The 'minimum conflict' setting should be expected
+     to reproduce the common 'spellings' of all the possible major
+     scales from B major to Db major. The only expected error would
+     be the enharmonic F# and Gb scales, which would require Cb or E#
+     (illegal, since in pcsets, natural notes are always natural notes).
+
+     Also, it is expected that common alternative scales such as
+     the melodic minor and harmonic minor -- which can be represented
+     by an example scale with a single accidental -- should be able
+     to reproduce that form.  For example, the harmonic minor is often
+     given as a modification of the A minor scale to "A B C D E F G#"
+
+  2. By default, pcsets.pcops.OpSet is not a *-exported class. Instead,
+     four functions in pcsets.pcops return their solution sets as
+     OpSet instances. However, in playing around with the system in
+     interactive mode, it was found a __str__ function was VERY helpful
+     for quick analysis:
+
+       >>> from pcsets.pcset import *
+       >>> from pcsets.pcops import *
+       >>> pcs = PcSet('015')
+       >>> cscale = PcSet('024579B')
+       >>> print fit_in(cscale,pcs)   # no need to catch the object
+       T(4) T(11) TnI(0) TnI(5)
+       >>> print pcs.T(4)             # should be a subset of cscale
+       459
+
+     Two new tests were added to test/test_pcops to ensure this ability
+     doesn't break if changes are made to the package internals.
+
+
+------------------------------------------------------------------------
+r138 | mccosar | 2007-07-19 20:32:56 -0400 (Thu, 19 Jul 2007) | 42 lines
+
+  PCSETS VERSION 2.0.0 BETA 2 RELEASE
+
+  2.0.x Core API: ( % = not exported by '*' ; + = new )
+
+  pcsets/
+  |-- catalog [depends on pcset, pcops]
+  |   |-- SetCatalog
+  |   `-- showcatalog %
+  |-- noteops [depends on pcset] +
+  |   |-- pcfor +
+  |   `-- notes +
+  |-- pcops [depends on pcset]
+  |   |-- exact_equality
+  |   |-- set_equality
+  |   |-- same_prime
+  |   |-- op_path
+  |   |-- symmetry
+  |   |-- union
+  |   |-- common
+  |   |-- is_complement
+  |   |-- is_prime_complement
+  |   |-- subset_of
+  |   |-- fit_in
+  |   |-- harmonize
+  |   |-- prime_subset_of
+  |   |-- Rp
+  |   |-- Rp_path
+  |   |-- Rp_prime
+  |   |-- R0
+  |   |-- R1
+  |   |-- R2
+  |   `-- Zpair
+  `-- pcset [base module]
+      |-- PcSet
+      |-- PcSetException
+      `-- DefinitionError
+
+  svn_loc: atonal/tags/pcsets-2.0.0b2
+  product: pcsets-2.0.0b2.tar.gz
+  webpage: http://pcsets.googlecode.com/files/pcsets-2.0.0b2.tar.gz
+  dl_link: http://code.google.com/p/pcsets/
+
+
+------------------------------------------------------------------------
+r106 | mccosar | 2007-07-16 11:28:16 -0400 (Mon, 16 Jul 2007) | 11 lines
+
+  PCSETS VERSION 2.0.0 BETA 1 RELEASE
+
+  Starting API: ( % = not exported by '*' )
+
+  pcsets/
+  |-- catalog [depends on pcset, pcops]
+  |   |-- SetCatalog
+  |   `-- showcatalog %
+  |-- pcops [depends on pcset]
+  |   |-- exact_equality
+  |   |-- set_equality
+  |   |-- same_prime
+  |   |-- op_path
+  |   |-- symmetry
+  |   |-- union
+  |   |-- common
+  |   |-- is_complement
+  |   |-- is_prime_complement
+  |   |-- subset_of
+  |   |-- fit_in
+  |   |-- harmonize
+  |   |-- prime_subset_of
+  |   |-- Rp
+  |   |-- Rp_path
+  |   |-- Rp_prime
+  |   |-- R0
+  |   |-- R1
+  |   |-- R2
+  |   `-- Zpair
+  `-- pcset [base module]
+      |-- PcSet
+      |-- PcSetException
+      `-- DefinitionError
+
+  svn_loc: atonal/tags/pcsets-2.0.0b1
+  product: pcsets-2.0.0b1.tar.gz
+  webpage: http://pcsets.googlecode.com/files/pcsets-2.0.0b1.tar.gz
+  dl_link: http://code.google.com/p/pcsets/
+
+$Id: ChangeLog 208 2007-08-19 13:14:36Z mccosar $

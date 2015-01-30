@@ -1,0 +1,570 @@
+% $Id: pcsets_tutorial.tex 209 2007-08-19 16:41:44Z mccosar $
+% --------------------------------------------------------------------
+
+\documentclass[letterpaper,12pt,oneside]{book}
+
+\usepackage{indentfirst}
+\usepackage{verbatim}
+
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+% LC 206
+\usepackage[
+  paper=letterpaper,
+  tmargin=1in,
+  bmargin=1in,
+  includehead
+]{geometry}
+
+% LC 168
+\usepackage{listings}
+\lstset{
+  language=Python,
+  basicstyle=\tt
+}
+% LC 647
+\usepackage{makeidx}
+\makeindex
+% LC 698
+\usepackage{natbib}
+\bibliographystyle{alpha}
+
+\title{
+  {\bf pcsets}:\\
+  Pitch Class Sets for Python
+}
+\author{Bruce H. McCosar}
+
+% --------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+% --------------------------------------------------------------------
+
+\chapter{Introduction}
+
+This tutorial is an introduction to two subjects at once:
+
+\begin{itemize}
+\item {\bf Pitch Class Sets}, and
+\item the Python module {\bf pcsets}.
+\end{itemize}
+
+I'm hoping that the two will reinforce each other. That is, the
+standard method of learning about Pitch Class Sets might be to read a
+book\footnote{ Actually, there are some very good books. I've listed
+the best in the {\bf References} section (p.~\pageref{references}).
+I'll point out some of the most relevant as I go along. } or take a
+class. Very few times do you have the opportunity to actually {\em
+play} with them---to get some hands-on experience. Even if some
+brilliant inspiration strikes, sometimes the aggravation of working
+these set operations out manually can drag the idea to ground before
+it even has the chance to fly high.
+
+Well, here's an opportunity. A lot of the examples can be run in
+Python interactive mode. You can not only learn the concept, you
+can {\em try} the operation, immediately. You can develop your own
+ideas or theories and prove or disprove them quickly. For the more
+programming-oriented, I'm also including a few coding challenges that
+make use of the material you're learning.
+
+But above all, try some of these ideas out: {\em play} in the musical
+sense. If you play an instrument, let these concepts be a springboard
+to developing original music of your own. I'll give you some examples
+of how I'd approach this, but keep in mind that I come from a jazz
+background. You come from your own musical background, and you should
+find your own path.
+
+
+\section{Summary}
+
+Pitch Class Sets are a mathematical model for analyzing and composing
+music.\footnote{ The classic work of Pitch Class Set theory is Allen
+Forte's {\em The Structure of Atonal Music} \cite{forte}. Straus has
+also written a very readable introduction and overview \cite{straus}.
+} Each note `C' through `B' has an equivalent pitch class number 0
+through 11. Sets of these numbers may be operated on by mathematical
+functions, leading to new combinations and creations.
+
+The basic {\bf pcsets} modules free you from the drudgery of computing
+Pitch Class Set operations by hand. Moreover, incorporated into a
+programming language such as Python, the package allows application
+of the Pitch Class Set concepts to the broader use of musical
+interpretation and creation.
+
+
+\section{Why Pitch Class Sets?}
+
+Basically, one day, I got sick of II-V progressions. I'd read a lot on
+chord-scale theory, but I wasn't satisfied that was the whole of the
+musical universe. Sometimes I would play something, realize it worked,
+then think, {\em Hmm---now what was that?} Standard music theory just
+didn't cover it.\footnote{ This is something a lot of jazz musicians
+run into, eventually. Mark Levine was the first author to bring it to
+my attention \citep[p.~250]{levinep} with an unusual Herbie Hancock
+chord, notated ``E$\flat{}7^{\flat{}9}$/F''. There aren't really any
+standard scales having E$\flat$, E$\natural$, and F. }
+
+Looking back through my music notebooks a few weeks ago, I found the
+seed that started this all. On one page, I'd tried to work out a new
+chord progression, then wrote a final thought on the page:
+
+\begin{center}
+{\em Is there a periodic table for chords?}
+\end{center}
+
+It turns out that there was. You'll read about it in a later section
+(\S{} \ref{primecatalog}, p.~\pageref{primecatalog}). Since then, I've
+found them to be a general use creative tool, not just a static table.
+
+
+\section{Why pcsets?}
+
+I decided to write this Python module after finding most of the
+programs available online were GUI-only / interactive only (or worse
+\ldots{} applets). For various reasons, I needed to be able to set up
+long computational chains on a group of pitch class sets. Typing them
+into a web browser one at a time and poking buttons was {\em not} an
+option!
+
+I released the module to the public under the GPL (Appendix \ref{gpl},
+p.~\pageref{gpl}) for three reasons:
+
+\begin{enumerate}
+\item It might serve as an educational tool for music theory and
+Pitch Class sets.
+\item The addition of functions to connect set theory to the more
+traditional chord / scale theory might lead to innovative, new
+types of music software.
+\item There wasn't a module available that provided the same
+functionality.
+\end{enumerate}
+
+
+\section{The ``Uh Oh'' Section}
+
+I'm assuming, if you're reading this, that you're familiar with:
+
+\begin{itemize}
+\item At least a little music theory;
+\item the programming language Python; and
+\item mathematical concepts such as {\em function} and {\em identity}.
+\end{itemize}
+
+I'm also assuming you've read the distribution's README and INSTALL
+files, and have the {\bf pcsets} package installed on your system
+properly. I mean, after all---considering the range of the above
+requirements, you must be pretty good at whatever you do!\footnote{
+All six of you who are reading this, that is. $\ddot\smile$ }
+
+
+% --------------------------------------------------------------------
+
+\chapter{The Basics}
+
+\section{Pitch Classes}
+
+Pitch Class values are the ``atoms'' of the {\bf pcset} world.
+However, they do not cover every possible musical situation.
+
+
+\subsection{Restrictions}
+\index{pitch class!values!restrictions}
+
+In the literature, and in the {\bf pcsets} package, Pitch Class values
+are defined for {\em 12 tone equal temperament} only. \index{equal
+temperament}
+
+There are, of course, other methods of intonation, and other
+intonation systems around the world. In fact, a PcSets module
+tweaked for some sort of microtonal\index{microtonal} music might be
+pretty interesting.\footnote{ David Lewin demonstrated this concept
+quite well in Chapter 2 of his book \cite{lewin}, which is highly
+recommended reading if you are more into the mathematics of set
+theory. }
+
+But not today.
+
+
+\subsection{Definition}\index{pitch class!values!definition}
+
+A {\em Pitch Class} is a single integer that represents a particular
+musical note on the 12-tone equal temperament scale. `C' is defined as
+zero\index{pitch class!values!zero}; ascending the scale, each note is
+assigned consecutive integers until `B' (11).
+
+
+\subsection{Enharmonic Equivalence}
+\index{enharmonic equivalence}
+\index{equivalence!enharmonic}
+
+Because of the equal temperament basis, it is reasonable
+that enharmonic equivalance translates to {\em exact} Pitch
+Class equivalence. \index{pitch class!values!equivalence}
+\index{equivalence!pitch class} No distinction is made between
+C$\sharp$ and D$\flat$: they both have Pitch Class value~1.
+
+
+\subsection{Octave Equivalence}
+\index{octave!equivalence}
+\index{equivalence!octave}
+
+Perhaps the only Pitch Class value rule that may seem strange to a
+musician is the principle of {\bf octave equivalence}. Any note with
+the name `C'---whether it be played on the fifth string of a 7/8 scale
+upright bass or the highest key on a piano---is considered to be pitch
+class zero.
+
+Musicians are accustomed to thinking of notes being in a particular
+order, or in particular positions relative to other notes. Using Pitch
+Class values, the ``relativity'' information is lost.
+
+Pitch Classes, therefore, are an {\em abstraction} of musical
+structures. \index{pitch class!values!as abstraction} The information
+which we lose here is not really ``gone''. A musical structure
+translated to pitch class values has been reduced to some sort of
+essential structure; if we make any alterations to the structure, {\em
+we}, human beings, have to {\bf construct a new meaning} from the
+result.
+
+I wish to emphasize this as a particularly important point. We will
+see a lot of pitch class set transformations later on. Taken at face
+value, {\em they mean nothing}. They only acquire meaning through our
+interpretation.\index{pitch class!sets!meaning}
+
+I can write a Python module to do the math, but it's up to the user to
+provide the magic.
+
+
+\subsection{Pitch Class Value Table}
+\index{pitch class!values!table}
+
+The above rules lead to a fairly simple note name to Pitch Class
+conversion table:
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\rule[-3mm]{0mm}{8mm}
+{\bf note name} &
+C &
+$\frac{\mathrm{C}\sharp}{\mathrm{D}\flat}$ &
+D &
+$\frac{\mathrm{D}\sharp}{\mathrm{E}\flat}$ &
+E &
+F &
+$\frac{\mathrm{F}\sharp}{\mathrm{G}\flat}$ &
+G &
+$\frac{\mathrm{G}\sharp}{\mathrm{A}\flat}$ &
+A &
+$\frac{\mathrm{A}\sharp}{\mathrm{B}\flat}$ &
+B \\
+\hline
+\rule[-3mm]{0mm}{8mm}
+{\bf pitch class} &
+0 & 1 & 2 & 3 &
+4 & 5 & 6 & 7 &
+8 & 9 & 10 & 11 \\
+\hline
+\end{tabular}
+\end{center}
+
+Please note, however, one simplification, which will be consistent
+throughout the {\bf pcsets} module: I have omitted from the table
+any ``accidental'' notes that have a natural equivalent. There is no
+F$\flat$ on the table; E is always E. Similarly, there are no double
+flats or double sharps.
+
+I call this the {\em natural rule}. \index{pitch class!values!natural
+rule} There is no particular mathematical basis for it; in fact, there
+is no particular reason to have or use note names at all, other than
+convenience. For this reason, the core \lstinline{pcsets.pcset} module
+is a separate entity from the module which deals with traditional note
+names (\lstinline{pcsets.noteops}).\index{pcsets!noteops}
+
+
+\begin{comment} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Pitch Class Sets}
+
+Text.
+
+\subsection{Definition}
+
+Text.
+
+\subsubsection{Components}
+
+Text.
+
+\subsubsection{Unique Membership}
+
+Text.
+
+\subsubsection{Unordered Set}
+
+Text.
+
+\subsection{Set Names}
+
+Text.
+
+\subsubsection{Special Sets}
+
+Null
+Unison
+Interval
+Chromatic
+
+\subsubsection{General Sets}
+
+Trichords
+Tetrachords
+Pentachords
+Hexachords
+Septachords
+Octachords
+Nonachords
+
+
+\section{Representation}
+
+Text.
+
+\subsection{As a List}
+
+Text.
+
+\subsection{As a Specification String}
+
+Text.
+
+\subsection{As a String of Notes}
+
+Text.
+
+\subsubsection{noteops.pcfor}
+
+Text.
+
+\subsubsection{noteops.notes}
+
+Text.
+
+\subsubsection{Minimum Conflict}
+
+Text.
+
+\section{Transposition}
+
+Text.
+
+\subsection{Mod 12 Mathematics}
+
+Text.
+
+\subsection{Tn}
+
+Text.
+
+\subsection{T-n}
+
+Text.
+
+\subsection{TnTn}
+
+Text.
+
+\section{Inversion}
+
+Text.
+
+\subsection{I()}
+
+Text.
+
+\subsection{Other Inversions}
+
+Text.
+
+\subsection{Ixy(x,y)}
+
+Text.
+
+\section{Combined Operations}
+
+Text.
+
+\subsection{Inversion, then Transposition}
+
+Text.
+
+\subsection{Transposition, then Inversion}
+
+Text.
+
+\subsection{Multiple Operations}
+
+Text.
+
+\subsection{The ``Zorro Box''}
+
+Text.
+
+% --------------------------------------------------------------------
+
+\chapter{The Standards}
+
+\section{Normal Form}
+
+Text.
+
+\section{Zero}
+
+Text.
+
+\section{Reduced Form}
+
+Text.
+
+\section{Prime Form}
+
+Text.
+
+\subsection{Generating a Prime Family}
+
+Text.
+
+\subsection{Set Equivalence}
+
+Text.
+
+Tn or TnI
+
+\subsection{Exact Equivalence}
+
+Text.
+
+Rearrangement
+
+\section{The Prime Catalog}\label{primecatalog}
+
+Text.
+
+\subsection{Controversy}
+
+Text.
+
+\subsubsection{Major vs. Minor}
+
+Text.
+
+\subsubsection{Relativity for PcSets}
+
+Text.
+
+
+% --------------------------------------------------------------------
+
+\chapter{Single Set Operations}
+
+Text.
+
+
+\section{Permutations}
+
+Text.
+
+\subsection{Reverse}
+
+Text.
+
+\subsection{Sort}
+
+Text.
+
+\subsection{Shift}
+
+Text.
+
+
+\section{Derivations}
+
+Text.
+
+\subsection{Complement}
+
+Text.
+
+\subsection{Interval Vector}
+
+Text.
+
+\subsection{Common Tone Vector}
+
+Text.
+
+% --------------------------------------------------------------------
+
+\chapter{Operations on Two Sets}
+
+pcops.
+
+% --------------------------------------------------------------------
+
+\chapter{Tone Rows}
+
+tonerows.
+
+% demo section -- cut here v v v
+
+\chapter{Listing}\index{listing}
+
+\begin{lstlisting}
+>>> for x in range(20):
+>>>     print x
+\end{lstlisting}
+
+More examples.
+
+\chapter{Graphics}\index{graphics}
+
+Example.
+
+More examples.
+
+% demo section -- cut here ^ ^ ^
+
+\chapter*{About the Author}
+
+All sorts of fun facts.
+
+
+\appendix
+
+\chapter{The GNU Public License}\label{gpl}
+
+[Refer to license in main.]
+
+\chapter{The GNU Free Documentation License}\label{gfdl}
+
+[Too big, and formatted with all sorts of weird, nonstandard crap.]
+
+\end{comment} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\clearpage
+\addcontentsline{toc}{chapter}{References}\label{references}
+\bibliography{pcsets}
+
+\clearpage
+\addcontentsline{toc}{chapter}{Index}
+\printindex
+
+
+\end{document}
