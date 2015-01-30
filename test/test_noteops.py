@@ -35,15 +35,15 @@ in future versions.
 __metaclass__ = type
 
 import unittest
-from pcsets.pcset import *
-from pcsets.noteops import *
+from pcsets.pcset import PcSet, DefinitionError
+from pcsets.noteops import TranslationError, pcfor, notes
 
 
 # Used in testing minimum conflict principle in notes() The only scale that
 # deviates from standard is F#; since notes() can't turn the final F into 'E#'
 # (natural notes are always natural notes), there will always be at least one
 # conflict. Nor would it help to go to the Gb scale, which would require Cb.
-PROPER_SCALE_FORMS="""
+PROPER_SCALE_FORMS = """
 C D E F G A B        |
 Db Eb F Gb Ab Bb C   |
 D E F# G A B C#      |
@@ -63,7 +63,7 @@ B C# D# E F# G# A#
 # they are: C melodic minor, A harmonic minor, and C harmonic major. These
 # particular keys were chosen because in each case the scale has only one
 # accidental -- and it had better be the right one.
-ALTERNATIVE_SCALES="""
+ALTERNATIVE_SCALES = """
 023579B = C D Eb F G A B |
 9B02458 = A B C D E F G# |
 024578B = C D E F G Ab B
@@ -72,68 +72,68 @@ ALTERNATIVE_SCALES="""
 
 class PcForNoteTests(unittest.TestCase):
 
-    def prep(self,c):
+    def prep(self, c):
         return c.join(list("ABCDEFGx"))[:-2]
 
     # correct input, correct answer
 
     def test_natural(self):
         n = self.prep(' ')
-        self.assertEqual(list(pcfor(n)),[9,11,0,2,4,5,7])
+        self.assertEqual(list(pcfor(n)), [9, 11, 0, 2, 4, 5, 7])
 
     def test_flats(self):
         f = self.prep('b ')
-        self.assertEqual(list(pcfor(f)),[8,10,11,1,3,4,6])
+        self.assertEqual(list(pcfor(f)), [8, 10, 11, 1, 3, 4, 6])
 
     def test_sharps(self):
         s = self.prep('# ')
-        self.assertEqual(list(pcfor(s)),[10,0,1,3,5,6,8])
+        self.assertEqual(list(pcfor(s)), [10, 0, 1, 3, 5, 6, 8])
 
     def test_unicode_flats(self):
         f = self.prep(u'\u266D ')
-        self.assertEqual(list(pcfor(f)),[8,10,11,1,3,4,6])
+        self.assertEqual(list(pcfor(f)), [8, 10, 11, 1, 3, 4, 6])
 
     def test_unicode_sharps(self):
         s = self.prep(u'\u266F ')
-        self.assertEqual(list(pcfor(s)),[10,0,1,3,5,6,8])
+        self.assertEqual(list(pcfor(s)), [10, 0, 1, 3, 5, 6, 8])
 
     def test_unicode_naturals(self):
         n = self.prep(u'\u266E ')
-        self.assertEqual(list(pcfor(n)),[9,11,0,2,4,5,7])
+        self.assertEqual(list(pcfor(n)), [9, 11, 0, 2, 4, 5, 7])
 
     # empty string, correct answer
 
     def test_empty_string(self):
-        self.assertEqual(list(pcfor('')),[])
+        self.assertEqual(list(pcfor('')), [])
 
     # bad input, exception
 
     def test_improper_spec_int(self):
-        self.assertRaises(TranslationError,pcfor,42)
+        self.assertRaises(TranslationError, pcfor, 42)
 
     def test_improper_spec_float(self):
-        self.assertRaises(TranslationError,pcfor,4.2)
+        self.assertRaises(TranslationError, pcfor, 4.2)
 
     def test_improper_spec_list(self):
-        self.assertRaises(TranslationError,pcfor,[42])
+        self.assertRaises(TranslationError, pcfor, [42])
 
     def test_improper_format_no_spaces(self):
-        self.assertRaises(TranslationError,pcfor,'ABC')
+        self.assertRaises(TranslationError, pcfor, 'ABC')
 
     def test_improper_base_note(self):
-        self.assertRaises(TranslationError,pcfor,'FGH')
+        self.assertRaises(TranslationError, pcfor, 'FGH')
 
     def test_improper_modifier_typo(self):
-        self.assertRaises(TranslationError,pcfor,'AB C')
+        self.assertRaises(TranslationError, pcfor, 'AB C')
 
     def test_improper_modifier_double_flat(self):
-        self.assertRaises(TranslationError,pcfor,'Abb C')
+        self.assertRaises(TranslationError, pcfor, 'Abb C')
 
     def test_improper_modifier_double_sharp(self):
-        self.assertRaises(TranslationError,pcfor,'A## C')
+        self.assertRaises(TranslationError, pcfor, 'A## C')
 
     def test_improper_modifier_jolly_roger(self):
-        self.assertRaises(TranslationError,pcfor,u'A\u2620 C')
+        self.assertRaises(TranslationError, pcfor, u'A\u2620 C')
 
 
 class NotesFromPcTests(unittest.TestCase):
@@ -144,30 +144,32 @@ class NotesFromPcTests(unittest.TestCase):
     # correct input, correct answer.
 
     def test_pcs_flatpref(self):
-        self.assertEqual(notes(self.chrom,pref='b'),
+        self.assertEqual(notes(self.chrom, pref='b'),
                          'C Db D Eb E F Gb G Ab A Bb B')
 
     def test_pcs_sharppref(self):
-        self.assertEqual(notes(self.chrom,pref='#'),
+        self.assertEqual(notes(self.chrom, pref='#'),
                          'C C# D D# E F F# G G# A A# B')
 
     def test_pcs_flatpref_unicode(self):
-        self.assertEqual(notes(self.chrom,pref=u'\u266D'),
-             u'C D\u266d D E\u266d E F G\u266d G A\u266d A B\u266d B')
+        self.assertEqual(
+            notes(self.chrom, pref=u'\u266D'),
+            u'C D\u266d D E\u266d E F G\u266d G A\u266d A B\u266d B')
 
     def test_pcs_sharppref_unicode(self):
-        self.assertEqual(notes(self.chrom,pref=u'\u266F'),
-             u'C C\u266f D D\u266f E F F\u266f G G\u266f A A\u266f B')
+        self.assertEqual(
+            notes(self.chrom, pref=u'\u266F'),
+            u'C C\u266f D D\u266f E F F\u266f G G\u266f A A\u266f B')
 
     # Part of my specification is that notes() must also handle lists and spec
     # strings. In case something subtle changes in the module, these tests
     # will catch the breakage.
 
     def test_list_compatibility(self):
-        self.assertEqual(notes(range(12)),notes(self.chrom))
+        self.assertEqual(notes(range(12)), notes(self.chrom))
 
     def test_spec_compatibility(self):
-        self.assertEqual(notes('0123456789AB'),notes(self.chrom))
+        self.assertEqual(notes('0123456789AB'), notes(self.chrom))
 
     # Minimum Conflict. There are a few 'worked example' sets that should give
     # an obvious, consistent answer. The more tests here, the better.
@@ -175,23 +177,23 @@ class NotesFromPcTests(unittest.TestCase):
     def test_minconf_original(self):
         # The set where the whole idea started.
         pcs = PcSet('AB01')
-        answer = 'A# B C Db' # 0 namespace conflicts.
-        self.assertEqual(notes(pcs),answer)
+        answer = 'A# B C Db'  # 0 namespace conflicts.
+        self.assertEqual(notes(pcs), answer)
 
     def test_minconf_neighbor1(self):
         # Tests neighbor conflict in an ordered set, part 1.
         pcs = PcSet('AB9')
-        answer = 'A# B A' # 1 conflict.
+        answer = 'A# B A'  # 1 conflict.
         # 'Bb B A' also has 1 conflict, but A is not neighboring.
         # Therefore B pushes Bb to A#, a less popular note.
-        self.assertEqual(notes(pcs),answer)
+        self.assertEqual(notes(pcs), answer)
 
     def test_minconf_neighbor2(self):
         # Tests neighbor conflict in an ordered set, part 2.
         pcs = PcSet('9AB')
-        answer = 'A Bb B' # 1 inescapable conflict w/neighbors.
+        answer = 'A Bb B'  # 1 inescapable conflict w/neighbors.
         # Compare to above.  Deciding factor is popularity.
-        self.assertEqual(notes(pcs),answer)
+        self.assertEqual(notes(pcs), answer)
 
     def test_minconf_inescapable1(self):
         # 1 conflict no matter what.
@@ -200,7 +202,7 @@ class NotesFromPcTests(unittest.TestCase):
         # 'C C# D# E' also valid, but not as popular.
         # 'C Db D# E' also technically valid, but double accidental ugly.
         # Worst answer = 'C C# Eb E' (2 conflicts)
-        self.assertEqual(notes(pcs),answer)
+        self.assertEqual(notes(pcs), answer)
 
     def test_minconf_inescapable2(self):
         # 1 conflict no matter what.
@@ -208,7 +210,7 @@ class NotesFromPcTests(unittest.TestCase):
         answer = 'F F# G# A'
         # Similar to test above.
         # Screening against double accidental 'Gb G#'
-        self.assertEqual(notes(pcs),answer)
+        self.assertEqual(notes(pcs), answer)
 
     def test_minconf_inescapable3(self):
         # 1 conflict no matter what.
@@ -216,7 +218,7 @@ class NotesFromPcTests(unittest.TestCase):
         answer = 'G Ab Bb B'
         # Similar to test above.
         # Screening against double accidental 'Ab A#'
-        self.assertEqual(notes(pcs),answer)
+        self.assertEqual(notes(pcs), answer)
 
     # Principle: Minimum Conflict should reproduce the flat and sharp signs
     # in the 12 possible major scales. Reasoning: the note names were chosen
@@ -228,7 +230,7 @@ class NotesFromPcTests(unittest.TestCase):
         majorscale = PcSet('024579B')
         for n in range(12):
             answer = PROPER_SCALE_FORMS[n].strip()
-            self.assertEqual(notes(majorscale.T(n)),answer)
+            self.assertEqual(notes(majorscale.T(n)), answer)
 
     # Principle: Minimum Conflict should produce reasonable results for
     # these three alternative scales, which are often defined by putting
@@ -237,28 +239,27 @@ class NotesFromPcTests(unittest.TestCase):
     def test_alternative_scale_reproduction(self):
         for entry in ALTERNATIVE_SCALES:
             spec = [e.strip() for e in entry.split('=')]
-            self.assertEqual(notes(spec[0]),spec[1])
+            self.assertEqual(notes(spec[0]), spec[1])
 
     # bad input, exception
 
     def test_improper_input_int(self):
-        self.assertRaises(DefinitionError,notes,42)
+        self.assertRaises(DefinitionError, notes, 42)
 
     def test_improper_input_float(self):
-        self.assertRaises(DefinitionError,notes,4.2)
+        self.assertRaises(DefinitionError, notes, 4.2)
 
     def test_improper_input_string(self):
-        self.assertRaises(DefinitionError,notes,'01E')
+        self.assertRaises(DefinitionError, notes, '01E')
 
     # empty input, no problem
 
     def test_empty_pcs(self):
         pcs = PcSet([])
-        self.assertEqual(notes(pcs),'')
+        self.assertEqual(notes(pcs), '')
 
     def test_empty_list(self):
-        pcs = PcSet([])
-        self.assertEqual(notes([]),'')
+        self.assertEqual(notes([]), '')
 
     def test_empty_spec(self):
-        self.assertEqual(notes(''),'')
+        self.assertEqual(notes(''), '')

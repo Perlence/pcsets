@@ -34,12 +34,10 @@ __metaclass__ = type
 
 import unittest
 
-# I shouldn't be a hog here, considering this is a test suite, but the
-# module is in development. These need to be made more specific later for
-# readability.
-from pcsets.pcset import *
-from pcsets.noteops import *
+from pcsets.pcset import PcSet
+from pcsets.noteops import pcfor
 from pcsets.tonerow import *
+
 
 class ToneRowDefinition(unittest.TestCase):
 
@@ -48,24 +46,24 @@ class ToneRowDefinition(unittest.TestCase):
     def test_trdef_list(self):
         a = [9, 1, 11, 10, 4, 2, 3, 8, 5, 7, 6, 0]
         t = ToneRow(a)
-        self.assertEqual(list(t),a)
+        self.assertEqual(list(t), a)
 
     def test_trdef_spec(self):
         a = '1268A94B7053'
         t = ToneRow(a)
-        self.assertEqual(str(t),a)
+        self.assertEqual(str(t), a)
 
     def test_trdef_pcset_notes(self):
         # looks like a notes test, but actually tests
         # whether ToneRow will accept a PcSet as input.
         a = "C Eb C# G F Bb D B F# Ab E A"
         t = ToneRow(pcfor(a))
-        self.assertEqual(str(t),str(pcfor(a)))
+        self.assertEqual(str(t), str(pcfor(a)))
 
     # incorrect definition, exception
 
     def test_incomplete_row(self):
-        self.assertRaises(ToneRowException,ToneRow,range(11))
+        self.assertRaises(ToneRowException, ToneRow, range(11))
 
     # other relevant exceptions are raised by parent PcSet
     # class ... that's why we reuse code ;-)
@@ -91,47 +89,48 @@ class ToneRowMethods(unittest.TestCase):
         # It was worked out by hand, months ago!
 
     def test_P_obvious(self):
-        self.assertEqual(str(self.obvious.P(5)),'56789AB01234')
+        self.assertEqual(str(self.obvious.P(5)), '56789AB01234')
 
     def test_P_obscure(self):
-        self.assertEqual(str(self.obscure.P(4)),'459BA6237108')
+        self.assertEqual(str(self.obscure.P(4)), '459BA6237108')
 
     def test_R_obvious_str_n(self):
         # Also includes a test for string input (A = 10, B = 11)
-        self.assertEqual(str(self.obvious.R('B')),'BA9876543210')
+        self.assertEqual(str(self.obvious.R('B')), 'BA9876543210')
 
     def test_R_obscure(self):
-        self.assertEqual(str(self.obscure.R(4)),'4893BA267510')
+        self.assertEqual(str(self.obscure.R(4)), '4893BA267510')
 
     def test_I_obvious(self):
-        self.assertEqual(str(self.obvious.I(0)),'0BA987654321')
+        self.assertEqual(str(self.obvious.I(0)), '0BA987654321')
 
     def test_I_obscure(self):
-        self.assertEqual(str(self.obscure.I(4)),'43B9A2651780')
+        self.assertEqual(str(self.obscure.I(4)), '43B9A2651780')
 
     def test_RI_obvious(self):
-        self.assertEqual(str(self.obvious.RI(5)),'56789AB01234')
+        self.assertEqual(str(self.obvious.RI(5)), '56789AB01234')
 
     def test_RI_obscure(self):
-        self.assertEqual(str(self.obscure.RI(4)),'40B59A621378')
+        self.assertEqual(str(self.obscure.RI(4)), '40B59A621378')
 
     def test_shift_obvious(self):
-        self.assertEqual(str(self.obvious.shift(5)),'789AB0123456')
+        self.assertEqual(str(self.obvious.shift(5)), '789AB0123456')
 
     def test_shift_obscure(self):
-        self.assertEqual(str(self.obscure.shift(4)),'3984015762AB')
+        self.assertEqual(str(self.obscure.shift(4)), '3984015762AB')
 
     def test_rotate_obvious(self):
-        self.assertEqual(str(self.obvious.rotate(5,'A')),'AB0123456789')
+        self.assertEqual(str(self.obvious.rotate(5, 'A')), 'AB0123456789')
 
     def test_rotate_obscure(self):
-        self.assertEqual(str(self.obscure.rotate(4,'A')),'A43B78021956')
+        self.assertEqual(str(self.obscure.rotate(4, 'A')), 'A43B78021956')
 
     def test_contour_obvious(self):
-        self.assertEqual(self.obvious.contour(),[1]*12)
+        self.assertEqual(self.obvious.contour(), [1]*12)
 
-    def test_contour_obvious(self):
-        self.assertEqual(self.obscure.contour(),[1,4,2,11,8,8,1,4,6,11,8,8])
+    def test_contour_obvious_2(self):
+        self.assertEqual(self.obscure.contour(),
+                         [1, 4, 2, 11, 8, 8, 1, 4, 6, 11, 8, 8])
 
 
 class ToneRowOperations(unittest.TestCase):
@@ -145,25 +144,25 @@ class ToneRowOperations(unittest.TestCase):
         # Tests all 12 possibilities.
         for n in range(12):
             subject = self.testrow.P(n)
-            self.assert_(equivalent(self.testrow,subject))
+            self.assert_(equivalent(self.testrow, subject))
 
     def test_equivalent_by_R(self):
         # Tests all 12 possibilities.
         for n in range(12):
             subject = self.testrow.R(n)
-            self.assert_(equivalent(self.testrow,subject))
+            self.assert_(equivalent(self.testrow, subject))
 
     def test_equivalent_by_I(self):
         # Tests all 12 possibilities.
         for n in range(12):
             subject = self.testrow.I(n)
-            self.assert_(equivalent(self.testrow,subject))
+            self.assert_(equivalent(self.testrow, subject))
 
     def test_equivalent_by_RI(self):
         # Tests all 12 possibilities.
         for n in range(12):
             subject = self.testrow.RI(n)
-            self.assert_(equivalent(self.testrow,subject))
+            self.assert_(equivalent(self.testrow, subject))
 
     def test_not_equivalent(self):
         # Tests shift possibilities from 1 to 11.
@@ -173,7 +172,7 @@ class ToneRowOperations(unittest.TestCase):
         a = ToneRow([10, 0, 2, 8, 5, 6, 3, 1, 11, 4, 9, 7])
         for i in range(11):
             subject = a.shift(i+1)
-            self.failIf(equivalent(self.testrow,subject))
+            self.failIf(equivalent(self.testrow, subject))
 
     def test_rotequiv(self):
         # The grand prize.
@@ -192,11 +191,10 @@ class ToneRowOperations(unittest.TestCase):
                 for i in range(12):
                     # svar = Shift Variation
                     svar = trfm.shift(i)
-                    self.assert_(rotequiv(self.testrow,svar))
+                    self.assert_(rotequiv(self.testrow, svar))
 
     def test_not_rotequiv(self):
         a = ToneRow(range(12))
         # order is everything
-        b = ToneRow(range(10) + [11,10])
-        self.failIf(rotequiv(a,b))
-
+        b = ToneRow(range(10) + [11, 10])
+        self.failIf(rotequiv(a, b))

@@ -70,7 +70,7 @@ pcfor
 notes
 """.split()
 
-import pcset
+from .pcset import PcSet, PcSetException
 
 # If this is set to True, then the minconflict function will terminate with an
 # exception when the first three rules fail to narrow a PcSet down to a single
@@ -78,16 +78,16 @@ import pcset
 PERFECTION_TESTING = False
 
 
-UFLAT    = u"\u266D"
+UFLAT = u"\u266D"
 UNATURAL = u"\u266E"
-USHARP   = u"\u266F"
+USHARP = u"\u266F"
 
 CSCALE = list("C-D-EF-G-A-B")
 
 
 # Accidentals sorted from least popular to most popular. Popularity value is
 # numerical index in the list; see discussion in minconflict(pcs)
-RANKING="""
+RANKING = """
 A#
 Gb
 D#
@@ -101,7 +101,7 @@ Bb
 """.split()
 
 
-class TranslationError(pcset.PcSetException):
+class TranslationError(PcSetException):
     """
     Most exceptions thrown during translation will be a subclass
     of this.  However, the 'notes' function calls PcSet() -- bad
@@ -114,8 +114,8 @@ class NonStringError(TranslationError):
     Argument must be a space-separated string of notes.
     The problem found was: %(x)s %(type)s
     """
-    def __init__(self,x):
-        f = {'x' : x, 'type' : type(x)}
+    def __init__(self, x):
+        f = {'x': x, 'type': type(x)}
         self.message = self.__doc__ % f
 
 
@@ -126,8 +126,8 @@ class NoteFormatError(TranslationError):
     notes must be separated by spaces.
     The problem found was: %(problem)r
     """
-    def __init__(self,s):
-        self.message = self.__doc__ % {'problem' : s}
+    def __init__(self, s):
+        self.message = self.__doc__ % {'problem': s}
 
 
 class IllegalNoteError(TranslationError):
@@ -135,8 +135,8 @@ class IllegalNoteError(TranslationError):
     The base note must be a capital letter from A to G.
     The problem found was: %(problem)r
     """
-    def __init__(self,s):
-        self.message = self.__doc__ % {'problem' : s}
+    def __init__(self, s):
+        self.message = self.__doc__ % {'problem': s}
 
 
 class IllegalModifierError(TranslationError):
@@ -146,11 +146,11 @@ class IllegalModifierError(TranslationError):
     Also, notes must be separated by spaces.
     The illegal modifier found was: %(problem)r in %(setting)r
     """
-    def __init__(self,p,s):
-        self.message = self.__doc__ % {'problem' : p, 'setting' : s}
+    def __init__(self, p, s):
+        self.message = self.__doc__ % {'problem': p, 'setting': s}
 
 
-class PerfectionTestingFailure(pcset.PcSetException):
+class PerfectionTestingFailure(PcSetException):
     """
     The first three minimum conflict rules failed to narrow the possible
     output strings to a single clear winner. This normally does not cause an
@@ -161,8 +161,8 @@ class PerfectionTestingFailure(pcset.PcSetException):
     The problem: pcset %(problemset)s returned too many strings:
     %(stringlist)s
     """
-    def __init__(self,pcs,options):
-        f = {'problemset' : pcs, 'stringlist' : options}
+    def __init__(self, pcs, options):
+        f = {'problemset': pcs, 'stringlist': options}
         self.message = self.__doc__ % f
 
 
@@ -196,7 +196,7 @@ def pitchclass_of(note):
         elif accidental == UNATURAL:
             pass
         else:
-            raise IllegalModifierError(accidental,note)
+            raise IllegalModifierError(accidental, note)
     return base
 
 
@@ -222,8 +222,8 @@ def pcfor(spec):
     try:
         notelist = spec.split()
     except AttributeError:
-       raise NonStringError(spec)
-    return pcset.PcSet([pitchclass_of(note) for note in notelist])
+        raise NonStringError(spec)
+    return PcSet([pitchclass_of(note) for note in notelist])
 
 
 def flat(pc):
@@ -292,7 +292,7 @@ def popularitycontest(notestring):
     return amount
 
 
-def eliminate(items,based_on=None):
+def eliminate(items, based_on=None):
     """
     Utility function. A virtual contest -- eliminates items from a list if
     they don't have the best scores in the group. Only the items that scored
@@ -351,7 +351,7 @@ def minconflict(pcs):
        sorts the remaining strings and picks the one that comes first.
     """
     # permutations
-    options = [ [] ] # seed for an expandable list of lists
+    options = [[]]  # seed for an expandable list of lists
     for pc in pcs:
         if CSCALE[pc] != '-':
             # natural note
@@ -380,17 +380,17 @@ def minconflict(pcs):
         except IndexError:
             # no more tests!
             break
-        options = eliminate(options,based_on=contest)
+        options = eliminate(options, based_on=contest)
     if len(options) > 1:
         # algorithm perfection testing (optional)
         if PERFECTION_TESTING:
-            raise PerfectionTestingFailure(pcs,options)
+            raise PerfectionTestingFailure(pcs, options)
         # alphabetical order ;-) ...the last resort.
         options.sort()
     return options[0]
 
 
-def notes(pcslist,pref=''):
+def notes(pcslist, pref=''):
     """
     This function takes a PcSet or a list of numeric pitch classes and
     translates it into a human-readable string of note names. Optionally, it
@@ -401,22 +401,22 @@ def notes(pcslist,pref=''):
     depending on the setting the 'pref' parameter:
 
 
-        pref = ''  (not set)   : (default) 'minimum conflict' setting.
+        pref = ''  (not set)  : (default) 'minimum conflict' setting.
                                  See the discussion below.
 
-        pref = 'b' (flats)     : 'all flats' setting.
+        pref = 'b' (flats)    : 'all flats' setting.
                                  Flats are chosen.  The 'black key' notes
                                  are always Db, Eb, Gb, Ab, and Bb.
 
-        pref = '#' (sharps)    : 'all sharps' setting.
+        pref = '#' (sharps)   : 'all sharps' setting.
                                  Sharps are chosen.  The 'black key' notes
                                  are always C#, D#, F#, G#, and A#
 
-        pref = u"" (unicode)   : See the 'unicode' discussion below.
+        pref = u"" (unicode)  : See the 'unicode' discussion below.
                                  The unicode sharp and flat characters
                                  are legal substitutes for '#' and 'b'
 
-        pref = (anything else) : UNDEFINED. Who knows what the future holds?
+        pref = (anything else): UNDEFINED. Who knows what the future holds?
 
 
     THE 'MINIMUM CONFLICT' SETTING:
@@ -440,7 +440,7 @@ def notes(pcslist,pref=''):
     this will also trigger unicode output.
     """
     # gatekeeper
-    pcs = pcset.PcSet(pcslist)
+    pcs = PcSet(pcslist)
     # accidental preference
     if pref == 'b' or pref == UFLAT:
         stringform = ' '.join([flat(pc) for pc in pcs])
@@ -450,27 +450,26 @@ def notes(pcslist,pref=''):
         stringform = minconflict(pcs)
     # final formatting
     if type(pref) == type(u"") or type(pcslist) == type(u""):
-        stringform = stringform.replace('b',UFLAT)
-        stringform = stringform.replace('#',USHARP)
+        stringform = stringform.replace('b', UFLAT)
+        stringform = stringform.replace('#', USHARP)
     return stringform
 
 
 if __name__ == '__main__':
-    #
     print "\nDifferent interpretations of the chromatic scale:\n"
     print "\t>>> from pcsets.pcset import PcSet"
-    print "\t>>> from pcsets.noteops import notes,pcfor"
+    print "\t>>> from pcsets.noteops import notes, pcfor"
     print "\t>>> chromatic = PcSet(range(12))"
-    print "\t>>> print notes(chromatic,pref='b')"
-    print "\t", notes(range(12),pref='b')
+    print "\t>>> print notes(chromatic, pref='b')"
+    print "\t", notes(range(12), pref='b')
     print "\t>>> print notes(range(12),pref='#') # notes() handles pc lists"
-    print "\t", notes(range(12),pref='#')
+    print "\t", notes(range(12), pref='#')
     print "\t>>> print notes(range(12))          # default 'minimum conflict'"
     print "\t", notes(range(12))
     print "\t>>> # noteops also allows you to convert from notes to pcsets."
     print "\t>>> print pcfor('C Db D Eb E F Gb G Ab A Bb B')"
     print "\t", pcfor('C Db D Eb E F Gb G Ab A Bb B'), "\n"
-    #
+
     print "Minimum conflict tries to select notes so there is minimum"
     print "namespace conflict between the note names. For example, pitch"
     print "class set 'AB01' can be rendered 4 ways: \n"

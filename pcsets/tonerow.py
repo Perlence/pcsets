@@ -80,7 +80,7 @@ it look like if you transposed it so that the first element was 3?"
     RI(n)    : retrograde-inverted
 
     shift(i),
-    rotate(i,n):
+    rotate(i, n):
 
     Return a new ToneRow with the elements shifted by 'i'; rotate
     goes a bit further and transposes the first pitch to 'n' after
@@ -110,8 +110,8 @@ can be imported (or that are imported by default with * ):
     AVAILABLE TONE ROW OPERATIONS
     (see function documentation for more).
 
-    equivalent(a,b)
-    rotequiv(a,b)
+    equivalent(a, b)
+    rotequiv(a, b)
     randomrow()
 
 
@@ -153,7 +153,7 @@ pointless. Here's an overview:
         shift(i)          : Very Useful.  Duplicates Stravinsky's 'rotation'
                             function.  RETURNS A NEW TONEROW with the elements
                             shifted by 'i' places. See also the ToneRow method
-                            rotate(i,n).
+                            rotate(i, n).
 
         zero()            : Equivalent to method P(0).
 
@@ -166,7 +166,7 @@ pointless. Here's an overview:
 
     SET ANALYSIS
 
-        ivec()            : Useless. Always returns [12,12,12,12,12,6]
+        ivec()            : Useless. Always returns [12, 12, 12, 12, 12, 6]
 
         cvec()            : Useless. Always returns [12] * 12
 
@@ -175,7 +175,7 @@ pointless. Here's an overview:
         I(),
         T(n),
         TnI(n),
-        Ixy(x,y):
+        Ixy(x, y):
 
         See notes for transpose and inverse above.
 
@@ -203,7 +203,7 @@ won't be stable until at least version 2.1
 
 __metaclass__ = type
 
-__all__ ="""
+__all__ = """
 ToneRow
 equivalent
 rotequiv
@@ -212,8 +212,9 @@ ToneRowException
 """.split()
 
 
-from pcset import PcSet, PcSetException, moderate
 from random import shuffle
+
+from .pcset import PcSet, PcSetException, moderate
 
 
 class ToneRowException(PcSetException):
@@ -230,15 +231,15 @@ class IncompleteRowError(ToneRowException):
         %(problem)r
     of length %(length)d
     """
-    def __init__(self,problem):
+    def __init__(self, problem):
         trouble = {
-            'problem' : list(problem), # needed for helpful %r conversion.
-            'length'  : len(problem)
+            'problem': list(problem),  # needed for helpful %r conversion.
+            'length': len(problem)
             }
         self.message = self.__doc__ % trouble
 
 
-def correct_transposition(pcs,n):
+def correct_transposition(pcs, n):
     """
     Utility function.  Takes an input PcSet and returns it with
     the first element transposed to n; n can even be a string,
@@ -268,7 +269,7 @@ class ToneRow(PcSet):
     to regard as just another chromatic scale.
     """
 
-    def __init__(self,definition):
+    def __init__(self, definition):
         """
         A ToneRow must be length 12.  It may be defined any way
         that a PcSet can:
@@ -277,11 +278,11 @@ class ToneRow(PcSet):
             2. Through ToneRow('spec string')
             3. And, indirectly through ToneRow(pcfor("list of notes"))
         """
-        super(ToneRow,self).__init__(definition)
+        super(ToneRow, self).__init__(definition)
         if len(self) < 12:
             raise IncompleteRowError(self)
 
-    def P(self,n):
+    def P(self, n):
         """
         PRIME (ToneRow operation)
 
@@ -292,9 +293,9 @@ class ToneRow(PcSet):
         input string values 'A' for 10 and 'B' for 11.  Any other strings
         will trigger an IllegalCharacter exception.
         """
-        return ToneRow(correct_transposition(self,n))
+        return ToneRow(correct_transposition(self, n))
 
-    def R(self,n):
+    def R(self, n):
         """
         RETROGRADE (ToneRow operation)
 
@@ -305,9 +306,9 @@ class ToneRow(PcSet):
         input string values 'A' for 10 and 'B' for 11.  Any other strings
         will trigger an IllegalCharacter exception.
         """
-        return ToneRow(correct_transposition(self.reverse(),n))
+        return ToneRow(correct_transposition(self.reverse(), n))
 
-    def I(self,n):
+    def I(self, n):
         """
         INVERSE (ToneRow operation)
 
@@ -318,9 +319,9 @@ class ToneRow(PcSet):
         string values 'A' for 10 and 'B' for 11. Any other strings will
         trigger an IllegalCharacter exception.
         """
-        return ToneRow(correct_transposition(self.invert(),n))
+        return ToneRow(correct_transposition(self.invert(), n))
 
-    def RI(self,n):
+    def RI(self, n):
         """
         RETROGRADE INVERSE (ToneRow operation)
 
@@ -333,9 +334,9 @@ class ToneRow(PcSet):
         trigger an IllegalCharacter exception.
         """
         ri = self.invert().reverse()
-        return ToneRow(correct_transposition(ri,n))
+        return ToneRow(correct_transposition(ri, n))
 
-    def shift(self,i):
+    def shift(self, i):
         """
         SHIFT (ToneRow operation)
 
@@ -351,11 +352,11 @@ class ToneRow(PcSet):
         accommodate negative numbers; however, in spec string notation (0-9
         and A-B), there is no such thing -- only a single character.
         """
-        pcs = PcSet(self) # I have to call on an ancestor here,
-                          # or there's a loop!
+        # I have to call on an ancestor here, or there's a loop
+        pcs = PcSet(self)
         return ToneRow(pcs.shift(i))
 
-    def rotate(self,i,n):
+    def rotate(self, i, n):
         """
         ROTATE (ToneRow operation)
 
@@ -376,7 +377,7 @@ class ToneRow(PcSet):
         character.
         """
         pcs = PcSet(self)
-        return ToneRow(correct_transposition(pcs.shift(i),n))
+        return ToneRow(correct_transposition(pcs.shift(i), n))
 
     def contour(self):
         """
@@ -438,12 +439,12 @@ class ToneRow(PcSet):
         in position '-1'.
         """
         c = []
-        for this, next in zip(self,self.shift(-1)):
-            c.append((next-this)%12)
+        for this, next in zip(self, self.shift(-1)):
+            c.append((next-this) % 12)
         return c
 
 
-def equivalent(a,b):
+def equivalent(a, b):
     """
     Returns True if the operations P(n), R(n), I(n), and RI(n) return the same
     family of ToneRows for both 'a' and 'b'. In other words, all 48 possible
@@ -460,14 +461,14 @@ def equivalent(a,b):
     return False
 
 
-def rotequiv(a,b):
+def rotequiv(a, b):
     """
     Rotational equivalence:
     Returns True if any of the 12 possible rotations of 'a' or 'b'
-    are equivalent (see definition for equivalent(a,b)).
+    are equivalent (see definition for equivalent(a, b)).
     """
     for n in range(12):
-        if equivalent(a.shift(n),b):
+        if equivalent(a.shift(n), b):
             return True
     return False
 

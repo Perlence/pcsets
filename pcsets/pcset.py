@@ -76,7 +76,7 @@ in the entire version 2 series.
 
 __metaclass__ = type
 
-__all__ = ['PcSet','PcSetException','DefinitionError']
+__all__ = ('PcSet', 'PcSetException', 'DefinitionError')
 
 
 class PcSetException(Exception):
@@ -104,8 +104,8 @@ class IllegalCharacter(DefinitionError):
     characters are the digits 0-9 and the capital letters A and B.
     The first illegal character encountered was: %(illegal)s
     """
-    def __init__(self,ch):
-        self.message = self.__doc__ % {'illegal' : ch}
+    def __init__(self, ch):
+        self.message = self.__doc__ % {'illegal': ch}
 
 
 class NonIterableDef(DefinitionError):
@@ -116,10 +116,10 @@ class NonIterableDef(DefinitionError):
 
     problem input = %(problem)s %(classification)s
     """
-    def __init__(self,x):
+    def __init__(self, x):
         trouble = {
-            'problem' : x,
-            'classification' : type(x)
+            'problem': x,
+            'classification': type(x)
             }
         self.message = self.__doc__ % trouble
 
@@ -196,7 +196,7 @@ class PcSet:
 
     # basic services
 
-    def __init__(self,definition):
+    def __init__(self, definition):
         """
         A PcSet may be defined as a spec string or as a list. If a string is
         entered, the only characters allowed are 0-9 and A-B (A represents
@@ -244,7 +244,7 @@ class PcSet:
         inverse = [((12-note) % 12) for note in self]
         return PcSet(inverse)
 
-    def transpose(self,n):
+    def transpose(self, n):
         """
         Returns a new PcSet which is the original transposed by n.
         """
@@ -277,7 +277,7 @@ class PcSet:
         """
         return PcSet(sorted(self))
 
-    def shift(self,n):
+    def shift(self, n):
         """
         Returns a new PcSet in which the elements of the original have been
         shifted up 'n' places. (Negative values for n shift down instead; zero
@@ -289,7 +289,7 @@ class PcSet:
             uptimes = int(n) % size
             if uptimes > 0:
                 for x in range(uptimes):
-                    copy.insert(0,copy.pop())
+                    copy.insert(0, copy.pop())
         return PcSet(copy)
 
     def zero(self):
@@ -370,8 +370,8 @@ class PcSet:
         can be compared to the original reduced form.  The prime form,
         then, is the reduced set that has the closest leftward packing.
         """
-        original = self.normal().zero()          # reduced form
-        inverted = self.invert().normal().zero() # reduced form of inverse
+        original = self.normal().zero()           # reduced form
+        inverted = self.invert().normal().zero()  # reduced form of inverse
         if binaryvalue(original) < binaryvalue(inverted):
             return original
         else:
@@ -425,13 +425,13 @@ class PcSet:
         """
         return self.invert()
 
-    def T(self,n):
+    def T(self, n):
         """
         Shorthand for transpose(n)
         """
         return self.transpose(n)
 
-    def TnI(self,n):
+    def TnI(self, n):
         """
         Shorthand for two combined operations: first inversion, then
         transposition by n. (Although class methods use postfix notation, the
@@ -440,7 +440,7 @@ class PcSet:
         """
         return self.invert().transpose(n)
 
-    def Ixy(self,x,y):
+    def Ixy(self, x, y):
         """
         Shorthand for inversion around an axis specified by pitch classes x
         and y. Inversion around this axis will cause x to become y and y to

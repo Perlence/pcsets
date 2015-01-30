@@ -38,7 +38,7 @@ __metaclass__ = type
 import unittest
 from operator import add
 
-from pcsets.catalog import *
+from pcsets.catalog import SetCatalog
 
 
 # Let's just do this once.
@@ -49,22 +49,22 @@ class AllTests(unittest.TestCase):
 
     def setUp(self):
         self.r = maincatalog
-        self.expected = [1,1,6,12,29,38,50,38,29,12,6,1,1]
-        self.total = reduce(add,self.expected)
+        self.expected = [1, 1, 6, 12, 29, 38, 50, 38, 29, 12, 6, 1, 1]
+        self.total = reduce(add, self.expected)
 
     def test_correct_entries_per_page(self):
         for n in range(13):
             found = len(self.r.page(n))
-            self.assertEqual(found,self.expected[n])
+            self.assertEqual(found, self.expected[n])
 
     def test_correct_entry_placement(self):
         for n in range(13):
             for entry in self.r.page(n):
-                self.assertEqual(len(entry),n)
+                self.assertEqual(len(entry), n)
 
     def test_total_length_via_len(self):
-        self.assertEqual(len(self.r),self.total)
+        self.assertEqual(len(self.r), self.total)
 
     def test_total_length_via_iter(self):
         flatcatalog = list(self.r)
-        self.assertEqual(len(flatcatalog),self.total)
+        self.assertEqual(len(flatcatalog), self.total)

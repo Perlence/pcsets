@@ -77,10 +77,11 @@ __all__ = ['SetCatalog']
 
 import pickle
 
-from pcset import *
-from pcops import *
+from .pcset import PcSet
+from .pcops import exact_equality
 
 PICKLE_FILE = 'catalog.pkl'
+
 
 def all_possible_pcsets():
     for n in xrange(4096):
@@ -90,9 +91,10 @@ def all_possible_pcsets():
                 result.append(bit)
         yield PcSet(result)
 
-def any_match(p,page):
+
+def any_match(p, page):
     for entry in page:
-        if exact_equality(p,entry):
+        if exact_equality(p, entry):
             return True
     return False
 
@@ -108,7 +110,7 @@ class SetCatalog:
     sensible defaults, so none are really required during routine use;
     the default conditions are shown.
 
-        SetCatalog(rebuild=False,store=True,failsafe=False)
+        SetCatalog(rebuild=False, store=True, failsafe=False)
 
     Returns a new SetCatalog object.  Options:
 
@@ -146,20 +148,20 @@ class SetCatalog:
     """
 
     def _rewrite(self):
-        storage = open(PICKLE_FILE,'wb')
-        pickle.dump(self.catalog,storage,-1)
+        storage = open(PICKLE_FILE, 'wb')
+        pickle.dump(self.catalog, storage, -1)
         storage.close()
 
     def _rebuild(self):
         # self.catalog[n] = a 'page' listing primes with cardinality n
-        self.catalog = [ [] for page in range(13) ]
+        self.catalog = [[] for page in range(13)]
         # Warning: if the above is defined with the shortcut
         #     self.catalog = [[]] * 13
         # this ends up as a list of references to the same empty set!
         for s in all_possible_pcsets():
             p = s.prime()
             page = self.catalog[len(p)]
-            if not any_match(p,page):
+            if not any_match(p, page):
                 page.append(p)
         if self.store:
             try:
@@ -169,11 +171,11 @@ class SetCatalog:
                     raise
 
     def _retrieve(self):
-        storage = open(PICKLE_FILE,'rb')
+        storage = open(PICKLE_FILE, 'rb')
         self.catalog = pickle.load(storage)
         storage.close()
 
-    def __init__(self,rebuild=False,store=True,failsafe=False):
+    def __init__(self, rebuild=False, store=True, failsafe=False):
         self.store = store
         self.failsafe = failsafe
         if rebuild:
@@ -184,7 +186,7 @@ class SetCatalog:
             except IOError:
                 self._rebuild()
 
-    def page(self,n):
+    def page(self, n):
         """
         The 'pages' in the catalog are organized by cardinality, that is, the
         length of the prime sets. If you want to find all the possible prime
@@ -211,7 +213,7 @@ class SetCatalog:
 
 def showcatalog():
     print "Generating prime set catalog... (this may take a moment)"
-    r = SetCatalog(rebuild=True,store=False)
+    r = SetCatalog(rebuild=True, store=False)
     print "Pitch Class Set Catalog: %d prime sets total\n" % len(r)
     for n in range(13):
         size = len(r.page(n))
@@ -219,7 +221,7 @@ def showcatalog():
             w = 'sets'
         else:
             w = 'set'
-        print "Cardinality %d: %d prime %s" % (n,size,w)
+        print "Cardinality %d: %d prime %s" % (n, size, w)
         position = 0
         for entry in r.page(n):
             if position == 0:
