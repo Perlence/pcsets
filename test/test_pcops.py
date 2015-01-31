@@ -38,7 +38,7 @@ import unittest
 from functools import reduce
 
 from pcsets.pcset import PcSet
-from pcsets.pcops import *
+from pcsets.pcops import *  # noqa
 
 
 class Equality(unittest.TestCase):

@@ -36,7 +36,7 @@ import unittest
 
 from pcsets.pcset import PcSet
 from pcsets.noteops import pcfor
-from pcsets.tonerow import *
+from pcsets.tonerow import *  # noqa
 
 
 class ToneRowDefinition(unittest.TestCase):

@@ -31,7 +31,8 @@ python runtest.py pcset  # just tests module pcset
 """
 
 from __future__ import print_function
-import unittest, sys
+import sys
+import unittest
 
 alltests = """
 pcset
@@ -41,7 +42,10 @@ noteops
 tonerow
 """.split()
 
-class NoSuchTestError(Exception): pass
+
+class NoSuchTestError(Exception):
+    pass
+
 
 def match(name):
     if name not in alltests:
@@ -49,7 +53,8 @@ def match(name):
     else:
         return name
 
-def run(testlist,level=2):
+
+def run(testlist, level=2):
     for name in testlist:
         if name:
             print("TESTING MODULE: pcsets.%s" % name)
@@ -60,9 +65,10 @@ def run(testlist,level=2):
             suite = unittest.TestLoader().loadTestsFromName(test)
             unittest.TextTestRunner(verbosity=level).run(suite)
 
-args = sys.argv[1:]
-if args:
-    tests = [match(name) for name in args]
-    run(tests)
-else:
-    run(alltests,level=1)
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    if args:
+        tests = [match(name) for name in args]
+        run(tests)
+    else:
+        run(alltests, level=1)

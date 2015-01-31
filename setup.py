@@ -33,7 +33,7 @@ __metaclass__ = type
 from setuptools import setup, find_packages
 
 
-PCSETS_VERSION = '2.0.2' # <===================== (auto-substituted)
+PCSETS_VERSION = '2.0.2'  # <===================== (auto-substituted)
 
 
 DESCRIPTION = 'Pitch Class Sets for Python.'
